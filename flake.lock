@@ -1,0 +1,23 @@
+{
+  "nodes": {
+    "releases": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-n7PXmGMESYnNh9MbTthokoEtwXinRvn0+07r90MImNU=",
+        "type": "file",
+        "url": "https://nodejs.org/download/release/index.json"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://nodejs.org/download/release/index.json"
+      }
+    },
+    "root": {
+      "inputs": {
+        "releases": "releases"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
