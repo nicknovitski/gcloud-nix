@@ -1,17 +1,32 @@
 # gcloud-nix
 
-A [make-shell](https://github.com/nicknovitski/make-shell) module for the Google Cloud SDK, or `gcloud` CLI tool.
+A [make-shell](https://github.com/nicknovitski/make-shell) module for [the Google Cloud SDK](https://cloud.google.com/sdk), or `gcloud`.
 
 ## Why?
 
 `make-shell` is a modular interface for making nix derivations intended for use by the `nix develop` command.  It has it's own lengthy [WHY document](https://github.com/nicknovitski/make-shell/blob/main/WHY.md).
 
-The Google Cloud SDK nix package has a
+I wrote this module to scratch a small itch I had when working on a bunch of projects were all deployed to Google Cloud, especially on Google Kubernetes Engine.  Once this module existed I could write a module that defines shared settings, and have project-specific overrides this:
+```
+# gke.nix
+{pkgs, ...}: {
+  gcloud.enable = true;
+  gcloud.extra-components = [ "kubectl" "gke-gcloud-auth-plugin" "skaffold" ];
+}
 
- 
-This is a module for `make-shell` that lets you 
+# For each project:
+pkgs.make-shell {
+  imports = [./gke.nix]; # DRY!
+  # project-specific options
+}
 
-I work on projects  which attempts to explain how it might be useful, but I thought that creating this repository might also give an indirect explanation.  
+# For example, a project which also uses pubsub:
+pkgs.make-shell ({pkgs, ...}: {
+  imports = [./gke.nix];
+  gcloud.extra-components = [ "pubsub-emulator" ]; # merges cleanly with the components in gke.nix!
+  packages = [ pkgs.openjdk ]; # necessary for the emulator to run
+})
+```
 
 ## Installation
 
@@ -30,7 +45,7 @@ Then, add the shell module to your shell's imports.  It'll look something like t
 ```nix
 devShells.default = pkgs.make-shell = { 
   imports = [inputs.gcloud-nix.shellModules.default]; # add option declarations...
-  javascript.gcloud.enable = true; # ...and definitions!
+  gcloud.enable = true; # ...and definitions!
 }
 # or, if you're using flake-parts...
 make-shell.imports = [gcloud-nix.shellModules.default]; # shared imports for all `make-shells` attributes
@@ -39,7 +54,7 @@ make-shells.default = {gcloud.enable = true;};
 
 ## Usage
 
-The options this module declares are documented [the OPTIONS.md file](OPTIONS.md).  Although if you know even a little nix, I bet you can read the declarations directly from [the module itself](shell-modules/default.nix) directory.
+The options which this module declares are documented [the OPTIONS.md file](OPTIONS.md).  Although if you know even a little nix, I bet you can read the declarations directly from [the module itself](shell-modules/default.nix).
 
 ## Examples
 

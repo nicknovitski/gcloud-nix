@@ -48,7 +48,7 @@ in
     };
     properties = mkOption {
       default = { };
-      description = "k";
+      description = "Configuration properties to set in the shell";
       type = types.attrsOf (
         types.attrsOf (
           types.oneOf [
